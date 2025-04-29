@@ -2,17 +2,17 @@ CUDA_VISIBLE_DEVICES=0,1 \
 python train_reader.py \
 --do_train \
 --prefix \
-musique_reader_deberta_large \
+hotpot_reader_deberta_large \
 --model_name \
-model/deberta-v3-large-squad2 \
+deepset/deberta-v3-large-squad2 \
 --tokenizer_path \
-model/deberta-v3-large-squad2 \
+deepset/deberta-v3-large-squad2 \
 --dataset_type \
-musique \
+hotpot \
 --train_file \
-datasets/mrc/musique/musique_ans_v1.0_train.jsonl \
+datasets/mrc/hotpotqa/hotpot_train_v1.1.json \
 --predict_file \
-datasets/mrc/musique/musique_ans_v1.0_dev.jsonl \
+datasets/mrc/hotpotqa/hotpot_dev_distractor_v1.json \
 --train_batch_size \
 8 \
 --learning_rate \

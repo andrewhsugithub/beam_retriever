@@ -5,9 +5,9 @@ python train_beam_retriever.py \
 --prefix \
 deberta_use_two_classier_musique_beam_size2 \
 --model_name \
-model/deberta-v3-base \
+microsoft/deberta-v3-base \
 --tokenizer_path \
-model/deberta-v3-base \
+microsoft/deberta-v3-base \
 --dataset_type \
 musique \
 --train_file \
