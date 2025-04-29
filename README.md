@@ -1,28 +1,37 @@
 # End-to-End Beam Retrieval for Multi-Hop Question Answering
-This is the repository for our paper "[End-to-End Beam Retrieval for Multi-Hop Question Answering](https://arxiv.org/abs/2308.08973)".
+This is the forked repository for the paper "[End-to-End Beam Retrieval for Multi-Hop Question Answering](https://arxiv.org/abs/2308.08973)".
 
-Our repository is under construction, feel free to contact us if you have any questions.
+## Setup
 
-Cheers! Our paper has been accepted to NAACL 2024 main conference. And our results have been published on [MuSiQue-Ans](https://leaderboard.allenai.org/musique_ans/submissions/public) , [2WikiMultihopQA](https://github.com/Alab-NII/2wikimultihop) and [HotpotQA](https://hotpotqa.github.io/). 
+1. Download Data and Model
+    - Uses three original datasets [MuSiQue-Ans](https://github.com/StonyBrookNLP/musique/), [HotpotQA](https://hotpotqa.github.io/) and [2WikiMultihopQA](https://github.com/Alab-NII/2wikimultihop) for the main 
+    experiments and three paritial datasets sampled by [IRCoT](https://github.com/StonyBrookNLP/ircot).
 
-## Download Data and Model
-We use three original datasets [MuSiQue-Ans](https://github.com/StonyBrookNLP/musique/), [HotpotQA](https://hotpotqa.github.io/) and [2WikiMultihopQA](https://github.com/Alab-NII/2wikimultihop) for our main 
-experiments and three paritial datasets sampled by [IRCoT](https://github.com/StonyBrookNLP/ircot).
+    - Uses [DeBERTa](https://huggingface.co/microsoft/deberta-v3-base) as the backbone model.
 
-We use [DeBERTa](https://huggingface.co/microsoft/deberta-v3-base) as our backbone model.
+2. Beam Retrieval
+    The code for Beam Retrieval is in directory `retrieval`.
+    - To train Beam Retrieval, choose the script from `run_train_retr_musique.sh`, `run_train_beam_retr.sh`, 
+    `run_train_2wiki.sh`, which aim at MuSiQue-Ans, HotpotQA and 2WikiMultihopQA respectively. Note that you should edit your actual url of data and model in the script. 
+    - For inference on HotpotQA, download the [checkpoints](https://github.com/canghongjian/beam_retriever/issues/1#issuecomment-2049002756) and put in `./checkpoints/hotpotqa/` directory. It should look like ![checkpoint dir image](./assets/image.png). Then run the appropriate script in `./inference/` directory depending on whether you need beam1 or beam2. Note that you should edit your actual url of data and model in the script. The result will be saved in `./output/` directory. See [./retrieval/config.py](./retrieval/config.py) for more details on the command args.
+    - For open domain retrieval setting, use the data produced by [MDR](https://github.com/facebookresearch/multihop_dense_retrieval/tree/main), and format them in directory `fullwiki`, then train Beam Retrieval using script `run_train_fullwiki_reranker`. 
 
-## Beam Retrieval
-The code for our Beam Retrieval is in directory `retrieval`. To train our Beam Retrieval, choose the script from `run_train_retr_musique.sh`, `run_train_beam_retr.sh`, 
-`run_train_2wiki.sh`, which aim at MuSiQue-Ans, HotpotQA and 2WikiMultihopQA respectively. Note that you should edit your actual url of data and model in the script. 
-
-For open domain retrieval setting, we use the data produced by [MDR](https://github.com/facebookresearch/multihop_dense_retrieval/tree/main), and we format them in directory `fullwiki`, then train our Beam Retrieval using script `run_train_fullwiki_reranker`. 
-## Downstream Reader
-The code for the supervised downstream reader is in directory `qa`, while the code for LLMs is `llm_exp_long.py`.
+3. Downstream Reader
+    - The code for the supervised downstream reader is in directory `qa`, while the code for LLMs is `llm_exp_long.py`.
+    - For training the supervised downstream reader, run `run_train_reader.sh` script. Note that you should edit your actual url of data and model in the script. No checkpoints are available currently unfortunately. See [./qa/config.py](./qa/config.py) for more details on the command args.
+    - For using LLM as reader, run `uv run subsample.py` to sample the data. The subsampled results will be in `./processed_data/hotpotqa/`. Note that you should edit the subsampling size and path url in the script. Then run `uv run llm_exp_long.py` to get the results. Note that you should have your environment variables available. The result will be saved in `./llm_reader/` directory. Edit the scripts to your needs.
 
 ## Results
 All the results of retrieval and downstream reader are in directory `results`.
 
 You can also obtain the scores through running `test_model_tmp.py` after training.
+
+- Retrieval Results on HotpotQA:
+    | Beam Type | Results Image |
+    |-----------|---------|
+    | **Beam1** | ![beam1 results](./assets/image-1.png) |
+    | **Beam2** | ![beam2 results](./assets/image-2.png) |
+
 ## Citation
 ```bibtex
 @inproceedings{
