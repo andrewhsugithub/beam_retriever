@@ -5,9 +5,9 @@ python train_beam_retriever.py \
 --prefix \
 train_2wiki_continue_training \
 --model_name \
-model/deberta-v3-base \
+microsoft/deberta-v3-base \
 --tokenizer_path \
-model/deberta-v3-base \
+microsoft/deberta-v3-base \
 --train_file \
 datasets/mrc/2wikimultihop/data/train.json \
 --predict_file \

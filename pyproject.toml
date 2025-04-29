@@ -1,0 +1,17 @@
+[project]
+name = "beam-retriever"
+version = "0.1.0"
+description = "[NAACL 2024] End-to-End Beam Retrieval for Multi-Hop Question Answering"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "gdown>=5.2.0",
+    "huggingface-hub[hf-xet]>=0.30.2",
+    "protobuf==3.20.1",
+    "python-dotenv>=1.1.0",
+    "scikit-learn>=1.6.1",
+    "sentencepiece>=0.2.0",
+    "tensorboard>=2.19.0",
+    "torch>=2.6.0",
+    "transformers==4.28.0",
+]

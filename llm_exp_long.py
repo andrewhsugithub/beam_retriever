@@ -6,29 +6,33 @@ import re
 import string
 import collections
 from tqdm import tqdm
+from dotenv import load_dotenv
 
 
+load_dotenv()
 
 
-api_key = ''
-api_url = 'http://localhost:8000/v1/completions'
-api_model_name = 'longchat-13b-16k' # 'gpt-3.5-turbo-16k'
+api_key = os.getenv('API_KEY')
+# api_url = 'http://localhost:8000/v1/completions'
+api_url = os.getenv('API_URL')
+# api_model_name = 'longchat-13b-16k' # 'gpt-3.5-turbo-16k'
+api_model_name = os.getenv('API_MODEL') # 'gpt-3.5-turbo-16k'
 headers={
-    # 'Authorization': f'Bearer {api_key}',
-    'Authorization': f'{api_key}',
+    'Authorization': f'Bearer {api_key}',
+    # 'Authorization': f'{api_key}',
     'Content-Type': 'application/json'
 }
 
 def get_response(tgt):
     data={
         "model": api_model_name,
-        # "messages":[
-        #     {
-        #         "role":"user",
-        #         "content":tgt
-        #     }
-        # ],
-        "prompt": tgt,
+        "messages":[
+            {
+                "role":"user",
+                "content":tgt
+            }
+        ],
+        # "prompt": tgt,
         "max_tokens": 50,
         "temperature": 0.5,
     }
@@ -44,18 +48,19 @@ def get_response(tgt):
 dataset_type = 'hotpot' 
 llm_type = 'open_source' # open_source or openai
 examples_num = 3 # few-shots
-output_file_path = f"example_{dataset_type}_{llm_type}.jsonl"
+output_file_path = f"./llm_reader/example_{dataset_type}_{llm_type}_{api_model_name}.jsonl"
+os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
 output_file = open(output_file_path, 'w')
 
-with open(f'prompts/few-shots_{dataset_type}.txt') as f:
+with open(f'./prompts/few-shots_{dataset_type}.txt') as f:
     prompt_template_few = f.read().rstrip("\n")
-with open(f'prompts/few-shots_{dataset_type}_br.txt') as f:
+with open(f'./prompts/few-shots_{dataset_type}_br.txt') as f:
     prompt_template_few_br = f.read().rstrip("\n")     
 
 if dataset_type == 'hotpot':
-    pred_data = json.load(open('hotpot_pred_best_retr.json'))
-    dev_data = json.load(open('data/hotpotqa/hotpot_dev_distractor_v1.json'))
-    test_subsampled_data = open('data/processed_data/hotpotqa/test_subsampled.jsonl').readlines()
+    pred_data = json.load(open('./results/retrieval/hotpot_pred_best_retr.json'))
+    dev_data = json.load(open('./datasets/mrc/hotpotqa/hotpot_dev_distractor_v1.json'))
+    test_subsampled_data = open('./processed_data/hotpotqa/test_subsampled.jsonl').readlines()
     test_subsampled_data = [json.loads(item) for item in test_subsampled_data]
     test_subsampled_data_ids = [item['question_id'] for item in test_subsampled_data]  
     test_subsampled_data = [item for item in dev_data if item['_id'] in test_subsampled_data_ids]
@@ -86,14 +91,14 @@ if dataset_type == 'hotpot':
                 print("prompt tokens num:", response['usage']['prompt_tokens'])
                 response = response['choices'][0]['message']['content'] if 'message' in response['choices'][0] else response['choices'][0]['text']
             else:
-                print('error wait 20 seconds...')
-                time.sleep(20)
+                print('error wait 60 seconds...')
+                time.sleep(60)
                 response = get_response(input)
                 response = response['choices'][0]['message']['content'] if 'message' in response['choices'][0] else response['choices'][0]['text']
         except Exception as e:
             print(e)
-            print('wait 20 seconds...')
-            time.sleep(20)
+            print('wait 60 seconds...')
+            time.sleep(60)
             response = get_response(input)
             if response != 'error':
                 print("prompt tokens num:", response['usage']['prompt_tokens'])
@@ -109,14 +114,14 @@ if dataset_type == 'hotpot':
                 print("prompt tokens num:", response2['usage']['prompt_tokens'])
                 response2 = response2['choices'][0]['message']['content'] if 'message' in response2['choices'][0] else response2['choices'][0]['text']
             else:
-                print('error wait 20 seconds...')
-                time.sleep(20)
+                print('error wait 60 seconds...')
+                time.sleep(60)
                 response2 = get_response(input)
                 response2 = response2['choices'][0]['message']['content'] if 'message' in response2['choices'][0] else response2['choices'][0]['text']
         except Exception as e:
             print(e)
-            print('wait 20 seconds...')
-            time.sleep(20)
+            print('wait 60 seconds...')
+            time.sleep(60)
             response2 = get_response(input)
             if response2 != 'error':
                 print("prompt tokens num:", response2['usage']['prompt_tokens'])
